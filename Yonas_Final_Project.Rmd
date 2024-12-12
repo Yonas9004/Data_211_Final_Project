@@ -1,0 +1,57 @@
+---
+title: "Final_Project"
+author: "Yonas Reda"
+date: "2024-12-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Final project
+
+```{r}
+# Create the dataset
+data <- data.frame(
+  Week = c(rep("Week 1", 7), rep("Week 2", 7), rep("Week 3", 7)),
+  Day = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+          "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+          "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+  Sleep_Hours = c(6.66, 6.69, 6.56, 5.39, 6.35, 7.49, 8.58,
+                  6.93, 7.55, 6.92, 5.43, 5.91, 7.96, 7.5,
+                  7.0, 7.2, 6.8, 5.9, 6.5, 8.2, 8.8),
+  Screen_Time_Hrs = c(4.5, 5.0, 3.8, 6.1, 5.5, 3.0, 2.5,
+                      4.2, 4.8, 3.7, 5.9, 5.2, 2.7, 2.3,
+                      3.5, 4.0, 5.0, 6.3, 4.8, 2.2, 1.8)
+)
+
+# Add a new column for Type of Day
+data$Type <- ifelse(data$Day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"), "Weekday", "Weekend")
+
+# Calculate mean Sleep Hours and Screen Time for Weekdays and Weekends
+means <- aggregate(cbind(Sleep_Hours, Screen_Time_Hrs) ~ Type, data, mean)
+print("Mean Sleep Hours and Screen Time by Type of Day:")
+print(means)
+
+# Perform a two-sample T-test
+weekdays_sleep <- data[data$Type == "Weekday", "Sleep_Hours"]
+weekends_sleep <- data[data$Type == "Weekend", "Sleep_Hours"]
+
+t_test_result <- t.test(weekdays_sleep, weekends_sleep)
+print("T-test Results:")
+print(t_test_result)
+
+# Plot the data
+library(ggplot2)
+ggplot(data, aes(x = Type, y = Sleep_Hours, fill = Type)) +
+  geom_bar(stat = "summary", fun = "mean", position = "dodge") +
+  labs(title = "Mean Sleep Hours by Type of Day",
+       x = "Type of Day",
+       y = "Sleep Hours") +
+  theme_minimal()
+
+```
+
+
+
